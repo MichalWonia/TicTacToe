@@ -10,11 +10,16 @@ public class TicTacToe {
     static int cpuTurns = 0;
     static boolean gameOver = false;
 
-    static char[][] gameBoard = { // the digits indicate the vertical and horizontal coordinates
-            {' ', ' ', '1', ' ', '2', ' ', '3'},
+    static char[][] gameBoard = { // the digits indicate the X and Y coordinates
+            {' ', ' ', '1', ' ', '2', ' ', '3'}, // <<- X
             {'1', ' ', '_', '|', '_', '|', '_'},
             {'2', ' ', '-', '|', '-', '|', '-'},
             {'3', ' ', '¯', '|', '¯', '|', '¯'}
+           // ^
+           // ^
+           // |
+           //
+           // Y
     };
 
     public static void main(String[] args) throws InterruptedException {
@@ -22,6 +27,7 @@ public class TicTacToe {
 
         while (!gameOver) {
             markPlacing(mark);
+            gameOver = gameOver();
             drawGameBoard();
             mark = changePlayer();
         }
@@ -44,11 +50,11 @@ public class TicTacToe {
             int posX;
             int posY;
             Scanner sc = new Scanner(System.in);
-            System.out.println("Select vertical coordinate of your mark: ");
+            System.out.println("Select X coordinate of your mark: ");
             posX = sc.nextInt();
-            System.out.println("Select horizontal coordinate of your mark: ");
+            System.out.println("Select Y coordinate of your mark: ");
             posY = sc.nextInt();
-            gameBoard[posX][2 * posY] = 'X';
+            gameBoard[posY][2 * posX] = 'X';
             playerTurns++;
 
         } else {
@@ -61,11 +67,11 @@ public class TicTacToe {
             int posY = random.nextInt(3) + 1;
 
             while (true) {
-                if (gameBoard[posX][2 * posY] == 'X' || gameBoard[posX][2 * posY] == 'O') {
+                if (gameBoard[posY][2 * posX] == 'X' || gameBoard[posY][2 * posX] == 'O') {
                     posX = random.nextInt(3) + 1;
                     posY = random.nextInt(3) + 1;
                 } else {
-                    gameBoard[posX][2 * posY] = 'O';
+                    gameBoard[posY][2 * posX] = 'O';
                     cpuTurns++;
                     break;
                 }
@@ -80,5 +86,39 @@ public class TicTacToe {
             mark = 'X';
         }
         return mark;
+    }
+
+    public static boolean gameOver() {
+
+        // game over if mark amount = 9
+        if (playerTurns + cpuTurns == 9) {
+            System.out.println("Game over");
+            return true;
+        }
+
+        // game over if 3 same marks in a row, column or diagonal
+        for (int i = 1; i <= 3; i++) {
+
+            // check rows
+            if (gameBoard[i][2] == mark && gameBoard[i][4] == mark && gameBoard[i][6] == mark) {
+                System.out.println("\nGame over");
+                System.out.println("Player with " + "'" + mark + "'" + " wins");
+                return true;
+                // check columns
+            } else if (gameBoard[1][i * 2] == mark && gameBoard[2][i * 2] == mark && gameBoard[3][i * 2] == mark) {
+                System.out.println("\nGame over");
+                System.out.println("Player with " + "'" + mark + "'" + " wins");
+                return true;
+            }
+        }
+
+        // check diagonals
+        if (gameBoard[1][2] == mark && gameBoard[2][4] == mark && gameBoard[3][6] == mark || gameBoard[3][2] == mark && gameBoard[2][4] == mark && gameBoard[1][6] == mark) {
+            System.out.println("\nGame over");
+            System.out.println("Player with " + "'" + mark + "'" + " wins");
+            return true;
+        } else {
+            return false;
+        }
     }
 }
